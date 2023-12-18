@@ -39,27 +39,27 @@ function updateWeatherData() {
     const predictFeed = "predict";
     const suggestFeed = "suggest";
     
-    const apiKey = "aio_doKd02bngC6PA1qhYeKzFulW0lcs";  // Thay YOUR_ADAFRUIT_IO_API_KEY bằng API key của bạn
+    const apiKey = "aio_lXyu733ji4SliWqfYRJbBvJpcA2M";  // Thay YOUR_ADAFRUIT_IO_API_KEY bằng API key của bạn
     
     // Gửi yêu cầu cho feed nhiệt độ
     fetch(`https://io.adafruit.com/api/v2/nghiemhunter1904/feeds/${temperatureFeed}/data/last?X-AIO-Key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
-            temperatureElement.innerText = `Nhiệt độ: ${data.value} °C`;
+            temperatureElement.innerText = `Nhiệt độ hiện tại: ${data.value} °C`;
         });
     
     // Gửi yêu cầu cho feed độ ẩm
     fetch(`https://io.adafruit.com/api/v2/nghiemhunter1904/feeds/${humidityFeed}/data/last?X-AIO-Key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
-            humidityElement.innerText = `Độ ẩm: ${data.value} %`;
+            humidityElement.innerText = `Độ ẩm hiện tại: ${data.value} %`;
         });
     
     // Gửi yêu cầu cho feed dự đoán thời tiết
     fetch(`https://io.adafruit.com/api/v2/nghiemhunter1904/feeds/${predictFeed}/data/last?X-AIO-Key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
-            predictElement.innerText = `Dự đoán thời tiết: ${data.value} %`;
+            predictElement.innerText = `Dự đoán thời tiết: ${data.value}`;
             // Xử lý dữ liệu dự đoán thời tiết
         });
     

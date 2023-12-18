@@ -5,6 +5,9 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 #include <PubSubClient.h>
+#include <DHT.h>
+
+#define DHTPIN D6
 
 char auth[] = BLYNK_AUTH_TOKEN;
 
@@ -13,7 +16,7 @@ char wifi_password[] = "quangbale1302@";
 
 const char* mqtt_server = "io.adafruit.com";
 const char* mqtt_user = "nghiemhunter1904";
-const char* mqtt_password = "aio_doKd02bngC6PA1qhYeKzFulW0lcs";
+const char* mqtt_password = "aio_lXyu733ji4SliWqfYRJbBvJpcA2M";
 
 const char* temperature_feed = "temperature";
 const char* humidity_feed = "humidity";
@@ -23,6 +26,8 @@ const char* suggest_feed = "suggest";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+DHT dht(DHTPIN,DHT11);
+
 float temperature = 35;
 int humidity = 70;
 char predict[50];
@@ -30,11 +35,12 @@ char suggest[50];
 
 void setup() {
   Serial.begin(115200);
-
+  dht.begin();
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+  predictWeather(temperature,humidity,predict,suggest);
   Blynk.begin(auth, ssid, wifi_password);
   client.setServer(mqtt_server, 1883);
-  predictWeather(temperature,humidity,predict,suggest);
-
 }
 
 void loop() {
@@ -48,9 +54,13 @@ void loop() {
   Blynk.virtualWrite(V4, suggest);
 
   // Ghi thông tin ra Serial
+  Serial.print("Nhiệt độ: ");
   Serial.println(temperature);
+  Serial.print("Độ ẩm: ");
   Serial.println(humidity);
+  Serial.print("Dự đoán thời tiết: ");
   Serial.println(predict);
+  Serial.print("Gợi ý hành động: ");
   Serial.println(suggest);
   
   // Kết nối MQTT lên Adafruit io.adafruit.com
@@ -86,11 +96,11 @@ void loop() {
   // Gửi dữ liệu gợi ý lên Adafruit IO
   client.publish(suggestTopic.c_str(), suggestData.c_str());
 
-  temperature = random(-50,101);
-  humidity = random(0,101);
+  // temperature = random(-50,101);
+  // humidity = random(0,101);
   predictWeather(temperature,humidity,predict,suggest);
 
-  delay(5000); // Đợi 1 giây trước khi đọc dữ liệu mới
+  delay(5000); // Đợi 5 giây trước khi đọc dữ liệu mới
 }
 
 void reconnect() {
